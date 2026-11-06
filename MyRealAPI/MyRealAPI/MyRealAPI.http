@@ -1,0 +1,13 @@
+@MyRealAPI_HostAddress = http://localhost:5062
+
+### Listar el catálogo
+GET {{MyRealAPI_HostAddress}}/api/products
+Accept: application/json
+
+### Consultar un producto
+GET {{MyRealAPI_HostAddress}}/api/products/1
+Accept: application/json
+
+### Producto inexistente: debe responder 404
+GET {{MyRealAPI_HostAddress}}/api/products/999
+Accept: application/json
