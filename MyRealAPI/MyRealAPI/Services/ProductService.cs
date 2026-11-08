@@ -1,39 +1,42 @@
 using MyRealAPI.DTOs;
-using MyRealAPI.Models;
 using MyRealAPI.Repositories;
 
-namespace MyRealAPI.Services;
-
-public class ProductService : IProductService
+namespace MyRealAPI.Services
 {
-    private readonly IProductRepository _productRepository;
-
-    public ProductService(IProductRepository productRepository)
+    public class ProductService : IProductService
     {
-        _productRepository = productRepository;
-    }
+        private readonly IProductRepository _repository;
 
-    public IReadOnlyList<ProductResponseDto> GetAll()
-    {
-        return _productRepository.GetAll().Select(ToDto).ToList();
-    }
-
-    public ProductResponseDto? Get(int id)
-    {
-        var product = _productRepository.Get(id);
-        return product is null ? null : ToDto(product);
-    }
-
-    private static ProductResponseDto ToDto(Product product)
-    {
-        return new ProductResponseDto
+        public ProductService(IProductRepository repository)
         {
-            Id = product.Id,
-            Code = product.Code,
-            Name = product.Name,
-            Description = product.Description,
-            Price = product.Price,
-            Stock = product.Stock
-        };
+            _repository = repository;
+        }
+
+        public IEnumerable<ProductResponseDto> GetAll()
+        {
+            return _repository.GetAll().Select(p => new ProductResponseDto
+            {
+                Codigo = p.Id.ToString(),
+                Nombre = p.Nombre,
+                Descripcion = p.Descripcion,
+                Precio = p.Precio,
+                Stock = p.Stock
+            });
+        }
+
+        public ProductResponseDto? Get(int id)
+        {
+            var p = _repository.Get(id);
+            if (p == null) return null;
+
+            return new ProductResponseDto
+            {
+                Codigo = p.Id.ToString(),
+                Nombre = p.Nombre,
+                Descripcion = p.Descripcion,
+                Precio = p.Precio,
+                Stock = p.Stock
+            };
+        }
     }
 }

@@ -4,22 +4,17 @@ using MyRealAPI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-// Una sola instancia mantiene el catálogo cargado mientras funciona la API.
-builder.Services.AddSingleton<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IReceiptRepository, ReceiptRepository>();
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
 
 var app = builder.Build();
-
-// Carga y valida el CSV al iniciar.
-app.Services.GetRequiredService<IProductRepository>();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", "MyRealAPI - Products"));
-}
-
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseAuthorization();
 app.MapControllers();
 app.Run();

@@ -1,9 +1,9 @@
 using MyRealAPI.DTOs;
-
-namespace MyRealAPI.Services;
-
-public interface IProductService
+namespace MyRealAPI.Services
 {
-    IReadOnlyList<ProductResponseDto> GetAll();
-    ProductResponseDto? Get(int id);
+    public interface IProductService
+    {
+        IEnumerable<ProductResponseDto> GetAll();
+        ProductResponseDto? Get(int id);
+    }
 }

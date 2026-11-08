@@ -1,11 +1,11 @@
-namespace MyRealAPI.Models;
-
-public class Product
+namespace MyRealAPI.Models
 {
-    public int Id { get; set; }
-    public string Code { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public decimal Price { get; set; }
-    public int Stock { get; set; }
+    public class Product
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Descripcion { get; set; } = string.Empty;
+        public decimal Precio { get; set; }
+        public int Stock { get; set; }
+    }
 }
