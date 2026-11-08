@@ -1,10 +1,10 @@
 using MyRealAPI.Models;
-namespace MyRealAPI.Repositories
+
+namespace MyRealAPI.Repositories;
+
+public interface IProductRepository
 {
-    public interface IProductRepository
-    {
-        IReadOnlyList<Product> GetAll();
-        Product? Get(int id);
-        void UpdateStock(int id, int amount);
-    }
+    IReadOnlyList<Product> GetAll();
+    Product? Get(int id);
+    void UpdateStock(int id, int stock);
 }

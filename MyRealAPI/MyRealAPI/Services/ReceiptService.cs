@@ -13,24 +13,30 @@ namespace MyRealAPI.Services
             _repository = repository;
         }
 
-        private ReceiptResponseDto MapToDto(Receipt r)
+        private ReceiptResponseDto MapToDto(Receipt receipt)
         {
+            var details = _repository.GetDetails(receipt.Id)
+                .Select(d => new ReceiptDetailDto(d.Id, d.ProductId, d.Description, d.UnitPrice, d.Quantity))
+                .ToList();
+
             return new ReceiptResponseDto
             {
-                Id = r.Id,
-                Date = r.Date,
-                CustomerDocument = r.CustomerDocument,
-                CustomerName = r.CustomerName,
-                Status = r.Status.ToString(),
-                Total = r.Total
+                Id = receipt.Id,
+                Date = receipt.Date,
+                CustomerDocument = receipt.CustomerDocument,
+                CustomerName = receipt.CustomerName,
+                Status = receipt.Status.ToString(),
+                Total = receipt.Status == ReceiptStatus.Cerrada ? receipt.Total : details.Sum(d => d.Subtotal),
+                Details = details
             };
         }
 
-        public IEnumerable<ReceiptResponseDto> GetAllReceipts() => _repository.GetAll().Select(MapToDto);
+        public IEnumerable<ReceiptResponseDto> GetAllReceipts() => _repository.GetAll().Select(MapToDto).ToList();
+
         public ReceiptResponseDto? GetReceiptById(int id)
         {
-            var r = _repository.GetById(id);
-            return r != null ? MapToDto(r) : null;
+            var receipt = _repository.GetById(id);
+            return receipt == null ? null : MapToDto(receipt);
         }
 
         public ReceiptResponseDto CreateReceipt(CreateReceiptDto dto)
@@ -38,23 +44,37 @@ namespace MyRealAPI.Services
             var receipt = new Receipt
             {
                 Date = DateTime.Now,
-                CustomerDocument = dto.CustomerDocument,
-                CustomerName = dto.CustomerName,
+                CustomerDocument = dto.CustomerDocument.Trim(),
+                CustomerName = dto.CustomerName.Trim(),
                 Status = ReceiptStatus.Abierta,
                 Total = 0
             };
             return MapToDto(_repository.Add(receipt));
         }
 
+        public void EnsureReceiptIsOpen(int id) => GetOpenReceipt(id);
+
+        private Receipt GetOpenReceipt(int id)
+        {
+            var receipt = _repository.GetById(id)
+                ?? throw new KeyNotFoundException("Factura no encontrada.");
+            if (receipt.Status == ReceiptStatus.Cerrada)
+                throw new InvalidOperationException("La factura ya está cerrada.");
+
+            return receipt;
+        }
+
         public ReceiptResponseDto CloseReceipt(int id)
         {
-            var receipt = _repository.GetById(id);
-            if (receipt == null) throw new Exception("Factura no encontrada");
-            if (receipt.Status == ReceiptStatus.Cerrada) throw new Exception("La factura ya está cerrada");
+            var receipt = GetOpenReceipt(id);
+            var response = MapToDto(receipt);
+            if (response.Details.Count == 0)
+                throw new InvalidOperationException("Una factura sin detalles no se puede cerrar.");
 
-            receipt.Status = ReceiptStatus.Cerrada;
-            _repository.Update(receipt);
-            return MapToDto(receipt);
+            var closed = receipt with { Status = ReceiptStatus.Cerrada, Total = response.Total };
+            _repository.Update(closed);
+            response.Status = closed.Status.ToString();
+            return response;
         }
     }
 }

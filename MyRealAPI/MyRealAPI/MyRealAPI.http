@@ -1,4 +1,4 @@
-@MyRealAPI_HostAddress = http://localhost:5062
+@MyRealAPI_HostAddress = http://localhost:5000
 
 ### Listar el catálogo
 GET {{MyRealAPI_HostAddress}}/api/products
@@ -11,3 +11,16 @@ Accept: application/json
 ### Producto inexistente: debe responder 404
 GET {{MyRealAPI_HostAddress}}/api/products/999
 Accept: application/json
+
+### Abrir una factura
+POST {{MyRealAPI_HostAddress}}/api/receipts
+Content-Type: application/json
+
+{"customerDocument":"PRUEBA-001","customerName":"Cliente de prueba"}
+
+### Usar el id devuelto al abrir la factura
+@receiptId = 1
+GET {{MyRealAPI_HostAddress}}/api/receipts/{{receiptId}}
+
+### Cierre sin detalles: 409
+POST {{MyRealAPI_HostAddress}}/api/receipts/{{receiptId}}/close

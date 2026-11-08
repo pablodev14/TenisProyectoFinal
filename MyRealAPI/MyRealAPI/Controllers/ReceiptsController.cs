@@ -21,7 +21,7 @@ namespace MyRealAPI.Controllers
             return Ok(_receiptService.GetAllReceipts());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public IActionResult GetById(int id)
         {
             var receipt = _receiptService.GetReceiptById(id);
@@ -36,24 +36,36 @@ namespace MyRealAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = newReceipt.Id }, newReceipt);
         }
 
-        [HttpPost("{id}/close")]
+        [HttpPost("{id:int}/close")]
         public IActionResult Close(int id)
+        {
+            return WithReceipt(() => Ok(_receiptService.CloseReceipt(id)));
+        }
+
+        [HttpPost("{id:int}/details")]
+        public IActionResult AddDetail(int id)
+        {
+            return WithReceipt(() =>
+            {
+                _receiptService.EnsureReceiptIsOpen(id);
+                return StatusCode(StatusCodes.Status501NotImplemented, "El registro de detalles corresponde al módulo 3.");
+            });
+        }
+
+        private IActionResult WithReceipt(Func<IActionResult> action)
         {
             try
             {
-                var closedReceipt = _receiptService.CloseReceipt(id);
-                return Ok(closedReceipt);
+                return action();
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
-        }
-        
-        [HttpPost("{id}/details")]
-        public IActionResult AddDetail(int id)
-        {
-            return Ok("Endpoint para agregar detalles a la factura " + id + ". Pendiente de Módulo 3.");
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
     }
 }
