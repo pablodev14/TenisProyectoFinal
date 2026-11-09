@@ -11,6 +11,7 @@ builder.Services.AddSingleton<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddSingleton<IReceiptRepository, ReceiptRepository>();
 builder.Services.AddScoped<IReceiptService, ReceiptService>();
+builder.Services.AddSingleton<DetailReceiptRepository>();
 
 var app = builder.Build();
 app.Services.GetRequiredService<IProductRepository>();

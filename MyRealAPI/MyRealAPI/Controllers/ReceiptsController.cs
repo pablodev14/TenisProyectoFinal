@@ -67,5 +67,33 @@ namespace MyRealAPI.Controllers
                 return Conflict(ex.Message);
             }
         }
+
+        // POST /api/receipts/{id}/details
+        [HttpPost("{id}/details")]
+        public ActionResult<ReceiptDetailDto> AddDetail(int id, [FromBody] CreateDetailReceiptDto dto)
+        {
+            try
+            {
+                // El controlador delega toda la responsabilidad al servicio
+                var detail = _receiptService.AddDetail(id, dto);
+
+                return Ok(detail); // Retornamos el DTO, nunca la entidad[cite: 7, 9]
+            }
+            catch (KeyNotFoundException ex)
+            {
+                // Si no existe la factura o el producto
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Si la factura está cerrada o no hay stock (reglas de negocio)
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // Cualquier otro error inesperado
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
     }
 }

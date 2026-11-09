@@ -8,5 +8,6 @@ namespace MyRealAPI.Services
         ReceiptResponseDto CreateReceipt(CreateReceiptDto dto);
         void EnsureReceiptIsOpen(int id);
         ReceiptResponseDto CloseReceipt(int id);
+        ReceiptDetailDto AddDetail(int receiptId, CreateDetailReceiptDto dto);
     }
 }
