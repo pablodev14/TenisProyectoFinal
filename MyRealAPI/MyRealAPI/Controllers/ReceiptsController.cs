@@ -42,16 +42,6 @@ namespace MyRealAPI.Controllers
             return WithReceipt(() => Ok(_receiptService.CloseReceipt(id)));
         }
 
-        [HttpPost("{id:int}/details")]
-        public IActionResult AddDetail(int id)
-        {
-            return WithReceipt(() =>
-            {
-                _receiptService.EnsureReceiptIsOpen(id);
-                return StatusCode(StatusCodes.Status501NotImplemented, "El registro de detalles corresponde al módulo 3.");
-            });
-        }
-
         private IActionResult WithReceipt(Func<IActionResult> action)
         {
             try
