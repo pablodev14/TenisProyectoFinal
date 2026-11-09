@@ -32,7 +32,7 @@ El catálogo usa modelos reales de Nike, adidas, New Balance, Vans y Converse. L
 | --- | --- |
 | ✅ Products | Consultar los cinco modelos del catálogo por lista o por ID. |
 | ✅ Receipt | Abrir, listar y recuperar facturas. Consultar sus detalles guardados, calcular el total y cerrar una factura con detalles. |
-| 🟡 DetailReceipt | Pendiente registrar la venta, guardar su detalle y descontar el stock en una sola operación coordinada. |
+| ✅ DetailReceipt | Registra la venta, guardar su detalle y descontar el stock en una sola operación coordinada. |
 
 ## 🧾 Módulo 2 · Receipt
 
@@ -110,5 +110,5 @@ dotnet run --project MyRealAPI/MyRealAPI/MyRealAPI.csproj --launch-profile http
 
 El integrante de **DetailReceipt** conectará la ruta de agregar productos. El cliente enviará `productId` y `quantity`. El servicio comprobará que la factura siga abierta, validará cantidad y stock y copiará el precio y la descripción del producto a la línea. Al integrar, el equipo deberá coordinar cierre, escritura del detalle y descuento de stock para que las ventas simultáneas o los fallos de guardado no dejen datos parciales.
 
-Quedan pendientes el flujo de venta completo en Swagger, sus pruebas de integración, el diagrama UML en Draw.io y la sustentación individual. [Enunciado del proyecto final](https://paradigmas-talleres.pages.dev/#/4/3)
+Quedan pendientes el diagrama UML en Draw.io y la sustentación individual. [Enunciado del proyecto final](https://paradigmas-talleres.pages.dev/#/4/3)
 
